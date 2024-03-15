@@ -1,0 +1,86 @@
+*{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.App {
+  margin: 100px auto;
+  padding: 30px;
+  width: 90%;
+  background-color: #eee;
+}
+
+
+
+Button {
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.exportBtn {
+  margin-right: 10px;
+}
+
+.evdBtn {
+  display: block;
+  margin: 0 -10px;
+  padding: 10px;
+  line-height: 17px;
+  width: 110%;
+  text-align: left;
+  border: none;
+  text-decoration: 1px underline #000;
+}
+
+.evdBtn:hover {
+  background-color: rgb(255, 255, 255);
+  color: #646464;
+  text-decoration: 1px underline #646464;
+}
+
+
+
+.modal label {
+  display: block;
+  margin: 30px 0px 10px 0px;
+}
+
+.evi .modal-footer {
+  justify-content:flex-start;
+}
+
+.dataTbl {
+  border-collapse: collapse;
+  border: 1px solid #b5b5b5;
+  margin: 20px auto;
+}
+
+.dataTbl th {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.dataTbl td, .dataTbl th {
+  overflow: hidden;
+  padding: 10px;
+  border-bottom: 1px solid #b5b5b5;
+  border-right: 1px solid #b5b5b5;
+}
+
+.selectBox {
+  width: 300px;
+  margin-right: 30px;
+  padding: 5px;
+}
+
+.licenseSelect {
+  display: block;
+  border: none;
+  padding: 3px;
+  background-color: rgba(0, 0, 0 , 0);
+  cursor: pointer;
+}
+
+.licenseSelect:hover {
+  background-color: rgba(255,255,255,0.7);
+}
