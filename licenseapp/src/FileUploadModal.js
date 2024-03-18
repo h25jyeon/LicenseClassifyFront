@@ -76,7 +76,7 @@ function FileUploadModal(props) {
       <Modal.Footer className='modal-footer'>
         {loading ? (
           <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
+            <span className="sr-only"></span>
           </Spinner>
         ) : (
           <Button variant="primary" onClick={handleUpload}>Upload</Button>

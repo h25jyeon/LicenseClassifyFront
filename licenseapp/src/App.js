@@ -140,26 +140,26 @@ function App() {
       )}
 
       {selectedWSId && 
-        <select className='selectBox' onChange={handleSelectChange} value={selectedWSId}>
-          {workingSet.map(ws => (
-            <option key={ws.id} value={ws.id}>{ws.name}</option>
-          ))}
-        </select>
+        <div className='workingSetBox'>
+          <select className='selectBox' onChange={handleSelectChange} value={selectedWSId}>
+            {workingSet.map(ws => (
+              <option key={ws.id} value={ws.id}>{ws.name}</option>
+            ))}
+          </select>
+          <Button className = 'exportBtn' onClick={handleExportClick}>CSV 내보내기</Button>
+        </div>
       } 
       
 
-      <Button className = 'exportBtn' onClick={handleExportClick}>CSV 내보내기</Button>
-      <Button variant="primary" onClick={() => setModalShow(true)}>파일 업로드</Button>
+      <Button className='uploadBtn' variant="primary" onClick={() => setModalShow(true)}>파일 업로드</Button>
 
       {loading && (
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
+        <Spinner className='spinner' animation="border" role="status">
+          <span className="visually-hidden"></span>
         </Spinner>
       )}
 
-      
-
-      {selectedppList.length > 0 && (
+      { !loading && selectedppList.length > 0 && (
         <table className='dataTbl'>
           <thead>
             <tr>
@@ -177,8 +177,8 @@ function App() {
             {selectedppList.map((obj, index) => (
               <tr key={obj.id}>
                 <td>{index + 1}</td> 
-                <td>
-                    <select className='licenseSelect' onChange={handleLTypeChange} id = {obj.id} value= {obj.licenseType ? obj.licenseType : "NONE"}>
+                <td className='licenseSelect'>
+                    <select onChange={handleLTypeChange} id = {obj.id} value= {obj.licenseType ? obj.licenseType : "NONE"}>
                       <option value="FREE">FREE</option>
                       <option value="SHAREWARE">SHAREWARE</option>
                       <option value="COMMERCIAL">COMMERCIAL</option>
