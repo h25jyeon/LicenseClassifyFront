@@ -1,0 +1,30 @@
+.modal {
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .modal-header, .modal-body, .modal-footer {
+        border: none;
+    }
+    
+    .modal-header {
+    }
+
+    .modal-body {
+        padding: 30px 20px;
+    }
+    
+    input[type="file" i] {
+        display: block;
+        margin-bottom: 30px;
+    }
+}
+
+.evi .modal-footer {
+justify-content:flex-start;
+}
+
+.uploadModal .modal-footer {
+justify-content: center;
+}

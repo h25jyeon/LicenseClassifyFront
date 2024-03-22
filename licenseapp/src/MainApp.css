@@ -1,0 +1,91 @@
+
+.MainApp {
+    padding: 50px 80px 0;
+    min-height: 100vh;
+    background-color: var(--dark-gray-background-color);
+    color: var(--default-text-color);
+  }
+  
+  .menuBox {
+    display:flex;
+    align-items: flex-end;
+  }
+  
+  .btnBox{
+    border-radius: 10px 10px 10px 10px;
+    box-shadow: 3px 3px 5px var(--btn-shadow-color);
+    cursor: pointer;
+    padding: 0 10px;      
+    background-color: var(--btn-default-color);
+    padding: 3px 10px;
+    margin-left: 20px;
+    color: var(--btn-text-color);
+    font-family: var(--font-SpoqaHanSansNeo-Medium);
+
+    &:hover,
+    &:active,
+    &.active {
+      background-color: var(--btn-active-color);
+    }
+  }
+  
+  .uploadBtn {
+    flex-shrink: 0;
+  }
+  
+  .exportBtn {
+    flex-grow: 1;
+  }
+  
+  .exportBtn .btnBox {
+    float: right;
+  }
+  
+  .evdBtn {
+    display: block;
+    padding-bottom: 10px;
+    text-align: left;
+    border: none;
+    text-decoration: 1px underline var(--default-text-color);
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--default-text-color);
+  }
+  
+  .evdBtn:hover {
+    color: var(--gray-text-color);
+    text-decoration: 1px underline var(--gray-text-color);
+  }
+  
+  .dataTbl {
+    border-collapse: collapse;
+    box-shadow: 5px 5px 10px var(--btn-shadow-color);
+    margin: 20px auto;
+    width: 100%;
+    background-color: var(--gray-background-color);
+  }
+  
+  .dataTbl th {
+    background-color:var(--light-gray-background-color);
+  }
+  
+  .dataTbl thead {
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .dataTbl td, .dataTbl th {
+    padding: 10px;
+  }
+  
+  .dataTbl td:first-child {
+    text-align: center;
+  }
+  
+  .dataTbl tr:nth-child(even) {
+    background-color: var(--light-gray-background-color);
+  }
+
+  .spinnerBox {
+    width:fit-content;
+    margin: 100px auto;
+  }
+  

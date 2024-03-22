@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
-import { Modal, Button, Spinner } from 'react-bootstrap';
+import { Modal, Spinner } from 'react-bootstrap';
 import './App.css';
+import './CustomModal.css';
 
 function FileUploadModal(props) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +64,7 @@ function FileUploadModal(props) {
   };
 
   return (
-    <Modal {...props} centered onHide={handleCloseModal}>
+    <Modal {...props} className='uploadModal' centered onHide={handleCloseModal}>
       <Modal.Header className='modal-header' closeButton>
         <Modal.Title>CSV Uploader</Modal.Title>
       </Modal.Header>
@@ -79,7 +80,7 @@ function FileUploadModal(props) {
             <span className="sr-only"></span>
           </Spinner>
         ) : (
-          <Button variant="primary" onClick={handleUpload}>Upload</Button>
+          <div className = 'btnBox' onClick={handleUpload}>Upload</div>
         )}
       </Modal.Footer>
     </Modal>

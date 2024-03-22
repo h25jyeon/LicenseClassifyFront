@@ -1,8 +1,28 @@
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url(./font/Noto_Sans_KR/NotoSansKR-VariableFont_wght.ttf);
+}
+
+@font-face {
+  font-family: 'SpoqaHanSansNeo-Medium';
+  src: url(./font/SpoqaHanSansNeo/SpoqaHanSansNeo-Medium.ttf);
+}
+
+@font-face {
+  font-family: 'SpoqaHanSansNeo-Light';
+  src: url(./font/SpoqaHanSansNeo/SpoqaHanSansNeo-Light.ttf);
+}
+
+@font-face {
+  font-family: 'SpoqaHanSansNeo-Regular';
+  src: url(./font/SpoqaHanSansNeo/SpoqaHanSansNeo-Regular.ttf);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif, 'NotoSansKR','SpoqaHanSansNeo-Medium', 'SpoqaHanSansNeo-Light', 'SpoqaHanSansNeo-Regular';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

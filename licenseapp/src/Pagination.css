@@ -1,0 +1,58 @@
+.pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    li {
+        width: 30px;
+        height: 30px;
+        border-radius: 1px 15px 8px 15px;
+        /* border-radius: 50%; */
+        transition: all 0.3s;
+        background-color: var(--btn-page-default-color);
+        box-shadow: 3px 3px 5px var(--btn-shadow-color);
+
+        &:hover,
+        &:active,
+        &.active {
+            background-color: var( --btn-page-active-color);
+            color: var(--white);
+        }
+
+        &:nth-child(1),
+        &:nth-child(2),
+        &:nth-last-child(1),
+        &:nth-last-child(2) {
+            a {
+                align-items: baseline;
+                font-size: 18px;
+            }
+        }
+
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            font-size: 12px;
+            text-decoration: none;
+            color: var(--btn-text-color);
+        }
+    }
+
+
+
+}
+.seletItemCnt{
+    margin-top: -47px;
+    float: inline-end;
+    margin-left: 10px;
+}
+
+.pageNum{
+    color: var(--gray-text-color);
+    text-align: center;
+}

@@ -1,0 +1,24 @@
+.customBtn{
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    box-shadow: 3px 3px 5px var(--btn-shadow-color);
+    cursor: pointer;
+    padding: 0 10px;      
+    background-color: var(--btn-default-color);
+    padding: 3px 10px;
+    margin-left: 20px;
+    color: var(--btn-text-color);
+    font-family: var(--font-SpoqaHanSansNeo-Medium);
+    font-size: 30px;
+    text-align: center;
+    line-height: 25px;
+    text-indent: -4px;
+
+    &:hover,
+    &:active,
+    &.active {
+      background-color: var(--btn-active-color);
+      
+    }
+  }
