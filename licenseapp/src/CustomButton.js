@@ -7,16 +7,19 @@ class CustomButton extends Component {
     super(props);
     this.state = {
       hovered: false,
-      showText: false, 
+      showText: false,
+      letterIndex: 0,
     };
   }
 
   handleMouseEnter = () => {
     this.setState({ hovered: true });
+    this.showText();
   };
 
   handleMouseLeave = () => {
     this.setState({ hovered: false });
+    this.hideText();
   };
 
   handleOnClick = () => {
@@ -25,62 +28,72 @@ class CustomButton extends Component {
       handleOnClick();
     }
   };
-  
-  componentDidMount() {
-    // 컴포넌트가 마운트되면 0.5초 후에 텍스트를 보이게 설정
-    setTimeout(() => {
-      this.setState({ showText: true });
-    }, 500);
-  }
+
+  showText = () => {
+    this.textTimer = setInterval(() => {
+      this.setState((prevState) => ({
+        letterIndex: prevState.letterIndex + 1,
+        showText: true,
+      }));
+    }, 40);
+  };
+
+  hideText = () => {
+    clearInterval(this.textTimer);
+    this.setState({
+      showText: false,
+      letterIndex: 0,
+    });
+  };
 
   render() {
-    const { icon, text } = this.props;
-    const { hovered, showText } = this.state;
+    const { icon: Icon, text } = this.props;
+    const { hovered, showText, letterIndex } = this.state;
 
     const styles = {
-        box: {
-        },
-        button: {
-            display: 'inline-block',
-            width: "30px",
-            height: "30px",
-            borderRadius: `${hovered ? 10 : 100}px`,
-            boxShadow: "3px 3px 5px var(--btn-shadow-color)",
-            cursor: "pointer",
-            padding: "0 10px",
-            backgroundColor: "var(--btn-default-color)",
-            padding: "3px 10px",
-            marginLeft: "20px",
-            color: "var(--btn-text-color)",
-            fontFamily: "var(--font-SpoqaHanSansNeo-Medium)",
-            fontSize: "30px",
-            textAlign: "right",
-            lineHeight: "25px",
-            textIndent: "-4px",
-            //transform: `translateX(${hovered ? 70 : 0}px)`, // hover 상태에 따라 오른쪽으로 이동
-            //transition: "transform 0.3s ease", // 트랜지션 효과 추가
-        },
-        buttonHover: {
-            backgroundColor: "var(--btn-active-color)",
-        },
-        content: {
-            display: 'inline-block',
-        },
-        letter: {
-          display: 'inline-block',
-          transition: "opacity 0.5s ease", // 글자 나타내는 애니메이션
-          opacity: showText ? 1 : 0, // showText 상태에 따라 보이거나 안 보이도록 설정
-          transform: `translateY(${showText ? 0 : 20}px)`, // 텍스트가 나타날 때 약간의 이동 효과 추가
-        },
+      box: {},
+      button: {
+        display: "inline-block",
+        height: '35px',
+        borderRadius: `${hovered ? 10 : 100}px`,
+        boxShadow: "3px 3px 5px var(--btn-shadow-color)",
+        cursor: "pointer",
+        backgroundColor: "var(--btn-default-color)",
+        padding: "3px 10px",
+        marginLeft: "20px",
+        color: "var(--btn-text-color)",
+        fontFamily: "var(--font-SpoqaHanSansNeo-Medium)",
+        fontSize: "30px",
+        textAlign: "left",
+        lineHeight: "25px",
+        textIndent: "-4px",
+      },
+      buttonHover: {
+        backgroundColor: "var(--btn-active-color)",
+      },
+      content: {
+        display: `${hovered ? 'inline-block' : 'none'}`,
+        marginLeft: '10px',
+        opacity: showText ? 1 : 0,
+        transition: "opacity 0.2s ease",
+      },
+      letter: {
+        display: "inline-block",
+        marginLeft: '3px',
+      },
+      icon: {
+        fontSize: "20px",
+        margin: "3px 0px 2px 2px",
+      },
     };
 
-    // 텍스트를 한 글자씩 나누어서 배열로 만듭니다.
-    const letters = text.split("");
+    const displayText = text.slice(0, letterIndex);
+
     return (
       <Motion
-        defaultStyle={{ width: 30 }} // 초기 가로 사이즈
-        style={{ 
-          width: spring(hovered ? 150 : 30) // 가로 사이즈 변경
+        defaultStyle={{ width: 35 }}
+        style={{
+          width: spring(hovered ? (text.length * 10 + 35) : 35, { stiffness: 300, damping: 20 }),
         }}
       >
         {(style) => (
@@ -89,27 +102,26 @@ class CustomButton extends Component {
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
             style={styles.box}
-        >
+          >
             <div
-                className={hovered ? "customBtn active" : "customBtn"}
-                style={{ ...styles.button, width: `${style.width}px`, ...(hovered && styles.buttonHover) }} // 스타일 객체와 Motion의 가로 사이즈를 결합
-                >
-                {icon}
+              className={hovered ? "customBtn active" : "customBtn"}
+              style={{
+                ...styles.button,
+                width: `${style.width}px`,
+                ...(hovered && styles.buttonHover),
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {Icon && <Icon style={styles.icon} />}
+                <div style={{ ...styles.content }}>
+                  {displayText.split("").map((letter, index) => (
+                    <span key={index} style={styles.letter}>
+                      {letter}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-            {hovered && 
-              <Motion
-                defaultStyle={{ opacity: 0 }}
-                style={{ opacity: spring(1) }}
-              >
-                {(style) => (
-                  <div style={{ ...styles.content, opacity: style.opacity }}>
-                    {letters.map((letter, index) => (
-                      <span key={index} style={styles.letter}>{letter}</span>
-                    ))}
-                  </div>
-                )}
-              </Motion>
-            }
           </div>
         )}
       </Motion>

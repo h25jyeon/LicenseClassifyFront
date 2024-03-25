@@ -11,24 +11,6 @@
     align-items: flex-end;
   }
   
-  .btnBox{
-    border-radius: 10px 10px 10px 10px;
-    box-shadow: 3px 3px 5px var(--btn-shadow-color);
-    cursor: pointer;
-    padding: 0 10px;      
-    background-color: var(--btn-default-color);
-    padding: 3px 10px;
-    margin-left: 20px;
-    color: var(--btn-text-color);
-    font-family: var(--font-SpoqaHanSansNeo-Medium);
-
-    &:hover,
-    &:active,
-    &.active {
-      background-color: var(--btn-active-color);
-    }
-  }
-  
   .uploadBtn {
     flex-shrink: 0;
   }

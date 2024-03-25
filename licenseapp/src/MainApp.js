@@ -3,6 +3,9 @@ import Spinner from 'react-bootstrap/Spinner';
 import axios from 'axios';
 import Pagination from 'react-js-pagination'
 
+import { PiExportBold } from "react-icons/pi";
+import { LuFilePlus2 } from "react-icons/lu";
+
 import './Pagination.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
 
@@ -199,13 +202,19 @@ function MainApp() {
         <div className = 'uploadBtn'>
           <CustomButton
             handleOnClick = {() => setModalShow(true)}
-            icon = {"+"}
+            icon = {LuFilePlus2}
             text = {"Csv Upload"}
           />
         </div>
         {selectedWSId && 
           <div className = 'exportBtn'>
-            <div className = 'btnBox' onClick={handleExportClick}>Export</div>
+            <div className = 'btnBox' onClick={handleExportClick}>
+              <CustomButton
+                handleOnClick = {handleExportClick}
+                icon = {PiExportBold}
+                text = {"Csv Export"}
+              />
+            </div>
           </div>
         } 
       </div>

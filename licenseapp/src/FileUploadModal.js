@@ -80,7 +80,7 @@ function FileUploadModal(props) {
             <span className="sr-only"></span>
           </Spinner>
         ) : (
-          <div className = 'btnBox' onClick={handleUpload}>Upload</div>
+          <div className = 'btnSubmit' onClick={handleUpload}>Upload</div>
         )}
       </Modal.Footer>
     </Modal>
