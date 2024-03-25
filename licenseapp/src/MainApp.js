@@ -14,6 +14,8 @@ import EvidenceModal from './EvidenceModal';
 import CustomSelect from './CustomSelect';
 import { useDarkMode } from './DarkMode';
 import CustomButton from "./CustomButton"
+import DataTable from './DataTable';
+
 import './MainApp.css';
 import './Toggle.css';
 
@@ -229,72 +231,14 @@ function MainApp() {
 
       { !loading && selectedppList.length > 0 && (
         <div>
-          <table className='dataTbl'>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>licenseType</th>
-                <th>productName</th>
-                <th>publisher</th>
-                <th>exceptions</th>
-                <th>fastText</th>
-                <th>llm</th>
-                <th>evidences</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedppList.map((obj, index) => (
-                <tr key={obj.id}>
-                  <td>{(currentPage - 1) * itemsPerPage + (index + 1)}</td> 
-                  <td className='licenseSelect'>
-                    <CustomSelect 
-                      id={obj.id}
-                      options={[
-                        { value: "FREE", label: "FREE" },
-                        { value: "SHAREWARE", label: "SHAREWARE" },
-                        { value: "COMMERCIAL", label: "COMMERCIAL" },
-                        { value: "ETC", label: "ETC" },
-                        { value: "NONE", label: "NONE" }
-                      ]}
-                      myFontSize="14px" 
-                      handleSelectChange={handleLTypeChange} 
-                      selectedValue={licenseTypeMap.get(obj.id)} 
-                      fontColor="#1d2023" 
-                      backgroundColor= {'var(--white)'}
-                      selectedBackgroundColor="#1d2023"
-                      selectedColor= {'var(--white)'}
-                      hoverColor = {'var(--white)'}
-                      hoverBackgroundColor = {'rgba(29, 32, 35, 0.5)'}
-                      width={150}
-                      controlColor = {'var(--default-text-color)'}
-                      controlBackgroundColor = {'rgba(0)'}
-                    />
-                  </td>
-                  {obj.patterns && (
-                    Object.entries(JSON.parse(obj.patterns)).map(([key, value]) => (
-                      <React.Fragment key={key}>
-                        {key === "productName" && (
-                          <td key={key + "_productName"}>{value}</td>
-                        )}
-                        {key === "publisher" && (
-                          <td key={key + "_publisher"}>{value}</td>
-                        )}
-                      </React.Fragment>
-                    ))
-                  )}
-
-                  <td>{obj.exceptions ? 'Yes' : 'No'}</td>
-                  <td>{obj.fastText}</td>
-                  <td>{obj.llm}</td>
-                  <td>
-                    {obj.evidences && obj.evidences !== "" && JSON.parse(obj.evidences).map((evidence, index) => (
-                        <button className='evdBtn' key={index} onClick={() => openEvidenceModal(evidence)}>{evidence.title}</button>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            selectedppList={selectedppList}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            handleLTypeChange={handleLTypeChange}
+            licenseTypeMap={licenseTypeMap}
+            openEvidenceModal={openEvidenceModal}
+          />
           <Pagination
             activePage={currentPage}
             itemsCountPerPage={itemsPerPage}

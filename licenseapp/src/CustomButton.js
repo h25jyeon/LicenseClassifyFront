@@ -35,7 +35,7 @@ class CustomButton extends Component {
         letterIndex: prevState.letterIndex + 1,
         showText: true,
       }));
-    }, 40);
+    }, 36);
   };
 
   hideText = () => {
@@ -55,35 +55,32 @@ class CustomButton extends Component {
       button: {
         display: "inline-block",
         height: '35px',
-        borderRadius: `${hovered ? 10 : 100}px`,
         boxShadow: "3px 3px 5px var(--btn-shadow-color)",
         cursor: "pointer",
         backgroundColor: "var(--btn-default-color)",
-        padding: "3px 10px",
-        marginLeft: "20px",
         color: "var(--btn-text-color)",
         fontFamily: "var(--font-SpoqaHanSansNeo-Medium)",
-        fontSize: "30px",
         textAlign: "left",
-        lineHeight: "25px",
-        textIndent: "-4px",
+        position: 'relative',
       },
       buttonHover: {
         backgroundColor: "var(--btn-active-color)",
       },
       content: {
-        display: `${hovered ? 'inline-block' : 'none'}`,
-        marginLeft: '10px',
+        position: 'absolute',
+        left: '58%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
         opacity: showText ? 1 : 0,
         transition: "opacity 0.2s ease",
+        whiteSpace: 'nowrap',
       },
       letter: {
-        display: "inline-block",
-        marginLeft: '3px',
+        textIndent:'3px',
       },
       icon: {
         fontSize: "20px",
-        margin: "3px 0px 2px 2px",
+        margin: "0px 0px 2px 2px",
       },
     };
 
@@ -91,9 +88,10 @@ class CustomButton extends Component {
 
     return (
       <Motion
-        defaultStyle={{ width: 35 }}
+        defaultStyle={{ width: 35, borderRadius : 100 }}
         style={{
-          width: spring(hovered ? (text.length * 10 + 35) : 35, { stiffness: 300, damping: 20 }),
+          width: spring(hovered ? (text.length * 13) : 35, { stiffness: 300, damping: 20 }),
+          borderRadius: spring(hovered ? 10 : 100, { stiffness: 500, damping: 27 }),
         }}
       >
         {(style) => (
@@ -108,18 +106,17 @@ class CustomButton extends Component {
               style={{
                 ...styles.button,
                 width: `${style.width}px`,
+                borderRadius: `${style.borderRadius}px`,
                 ...(hovered && styles.buttonHover),
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {Icon && <Icon style={styles.icon} />}
-                <div style={{ ...styles.content }}>
-                  {displayText.split("").map((letter, index) => (
-                    <span key={index} style={styles.letter}>
-                      {letter}
-                    </span>
-                  ))}
-                </div>
+              {Icon && <Icon style={styles.icon} />}
+              <div style={{ ...styles.content }}>
+                {displayText.split("").map((letter, index) => (
+                  <span key={index} style={styles.letter}>
+                    {letter}
+                  </span>
+                ))}
               </div>
             </div>
           </div>

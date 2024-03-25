@@ -37,34 +37,6 @@
     color: var(--gray-text-color);
     text-decoration: 1px underline var(--gray-text-color);
   }
-  
-  .dataTbl {
-    border-collapse: collapse;
-    box-shadow: 5px 5px 10px var(--btn-shadow-color);
-    margin: 20px auto;
-    width: 100%;
-    background-color: var(--gray-background-color);
-  }
-  
-  .dataTbl th {
-    background-color:var(--light-gray-background-color);
-  }
-  
-  .dataTbl thead {
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .dataTbl td, .dataTbl th {
-    padding: 10px;
-  }
-  
-  .dataTbl td:first-child {
-    text-align: center;
-  }
-  
-  .dataTbl tr:nth-child(even) {
-    background-color: var(--light-gray-background-color);
-  }
 
   .spinnerBox {
     width:fit-content;
