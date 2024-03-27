@@ -15,6 +15,7 @@ import CustomSelect from './CustomSelect';
 import { useDarkMode } from './DarkMode';
 import CustomButton from "./CustomButton"
 import DataTable from './DataTable';
+import StarComponent from './StarComponent';
 
 import './MainApp.css';
 import './Toggle.css';
@@ -161,6 +162,9 @@ function MainApp() {
 
   return (
     <div className="MainApp">
+      {/* <div className='starts'>
+        <StarComponent/>
+      </div> */}
       <div className='darkModeToggleBox'>
         <label>
           <input onChange={toggleDarkMode} type='checkbox' id='toggle'></input>
@@ -199,6 +203,7 @@ function MainApp() {
           controlColor = {'var(--default-text-color)'}
           controlBackgroundColor = {'0)'}
           width = {400}
+          menuPlacement = {"bottom"}
         />
       )}
         <div className = 'uploadBtn'>
@@ -270,6 +275,7 @@ function MainApp() {
               width={90}
               controlColor = {controlColor}
               controlBackgroundColor = {'rgba(29, 32, 35, 0)'}
+              menuPlacement = {"top"}
             />
           </div>
           <p className = "pageNum">{currentPage} of {Math.ceil(totalItemsCount / itemsPerPage)}</p>

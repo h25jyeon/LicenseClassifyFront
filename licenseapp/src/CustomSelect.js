@@ -17,7 +17,7 @@ class CustomSelect extends React.Component {
 
   render() {
     const { id, options, fontColor, backgroundColor, selectedColor, controlColor, myFontSize, hoverColor,
-            selectedBackgroundColor, controlBackgroundColor, hoverBackgroundColor, width } = this.props;
+            selectedBackgroundColor, controlBackgroundColor, hoverBackgroundColor, width, menuPlacement } = this.props;
     const { selectedValue } = this.state;
 
     
@@ -67,6 +67,7 @@ class CustomSelect extends React.Component {
         onChange={this.handleSelectChange}
         styles={styles}
         id={id}
+        menuPlacement={menuPlacement}
       />
     );
   }

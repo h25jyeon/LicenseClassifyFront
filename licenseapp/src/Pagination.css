@@ -9,7 +9,6 @@
         width: 30px;
         height: 30px;
         border-radius: 1px 15px 8px 15px;
-        /* border-radius: 50%; */
         transition: all 0.3s;
         background-color: var(--btn-page-default-color);
         box-shadow: 3px 3px 5px var(--btn-shadow-color);
