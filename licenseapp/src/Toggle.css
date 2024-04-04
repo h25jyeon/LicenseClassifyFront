@@ -1,20 +1,21 @@
 .darkModeToggleBox label {
     pointer-events: none;
     position: fixed;
-    top: 10px;
-    left: 15px;
+    top: 15px;
+    right: 15px;
+    z-index: 11;
   
     input {
       display: none;
   
       &:checked + .toggle-wrapper {
-        box-shadow: 0 8px 14px 0 rgba(darken(#3957ee, 12%), 0.12);
-        background-color: rgba(105, 105, 105, 0.151);
+        box-shadow: 0 8px 14px 0 rgba(darken(#ee5f39, 12%), 0.12);
+        background-color: var( --btn-page-active-color);
       }
   
       &:checked + .toggle-wrapper > .selector {
         left: calc(100% - 28px);
-        background-color: #3957ee;
+        background-color: #ee5f39;
       }
   
       &:checked ~ .notification > .selected:before {
@@ -26,12 +27,14 @@
       position: relative;
       width: 30px;
       height: 15px;
-      background-color: var( --btn-page-active-color);
       border-radius: 999px;
       margin: auto;
       cursor: pointer;
       pointer-events: all;
       box-shadow: 0 8px 14px 0 rgba(darken(#ee5f39, 12%), 0.12);
+      background-color: var( --btn-page-active-color);
+      box-shadow: 0 8px 14px 0 rgba(darken(#3957ee, 12%), 0.12);
+      background-color: rgba(105, 105, 105, 0.151);
   
       .selector {
         width: 10px;
@@ -40,7 +43,7 @@
         top: 50%;
         left: 18px;
         transform: translateY(-50%);
-        background-color: #ee5f39;
+        background-color: #3957ee;
         transition: left 0.25s ease;
         border-radius: 50%;
       }

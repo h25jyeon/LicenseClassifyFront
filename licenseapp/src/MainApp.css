@@ -1,7 +1,7 @@
 
 .MainApp {
   margin: 0%;
-  padding: 50px 80px 10px;
+  padding: 100px 80px 10px;
   min-height: 100vh;
   color: var(--default-text-color);
   width: 100%;
@@ -34,6 +34,38 @@
   z-index: 0;
 }
 
+.filterBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: var(--filter-background-color);
+  
+  display: flex;
+  align-items: center;
+  padding: 0px 20px;
+  z-index: 10;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+
+  div {
+    margin-right: 20px;
+    cursor: pointer;
+    span {
+      display: inline-block;
+      padding-left: 5px;
+    }
+  }
+}
+
+.scrolled {
+  opacity: 0.5;
+}
+
+.scrolled:hover {
+  opacity: 1;
+}
+
 .menuBox {
   display:flex;
   align-items: flex-end;
@@ -49,16 +81,6 @@
 
 .exportBtn .btnBox {
   float: right;
-}
-
-.evdBtn {
-  display: block;
-  padding-bottom: 10px;
-  text-align: left;
-  border: none;
-  text-decoration: 1px underline var(--default-text-color);
-  background-color: rgba(0, 0, 0, 0);
-  color: var(--default-text-color);
 }
 
 .evdBtn:hover {

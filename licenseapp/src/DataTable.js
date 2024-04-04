@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Motion, spring } from 'react-motion';
-import CustomSelect from './CustomSelect';
+import { MdCheckBox } from "react-icons/md";
+import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import ExceptionModal from './ExceptionModal'; 
 
 const styles = {
   dataTbl: {
@@ -25,6 +27,7 @@ const styles = {
   },
   tableRow: {
     display: 'flex',
+    alignItems: 'center',
   },
   tableCell: {
     flexShrink:'0',
@@ -38,7 +41,7 @@ const styles = {
     textAlign: 'center',
   },
   licenseType: {
-    width: '8%',
+    width: '7%',
     textAlign: 'center',
   },
   productName: {
@@ -48,12 +51,28 @@ const styles = {
     width:'12%',
   },
   evidences: {
-    flexGrow: '1',
+    width:'25%',
   },
+  evidencesBtn: {
+    maxWidth: '100%', 
+    overflow: 'hidden', 
+    textOverflow: 'ellipsis', 
+    whiteSpace: 'nowrap',
+    paddingBottom: '10px',
+    cursor: 'pointer',
+  },
+  exception: {
+    cursor: 'pointer',
+    color: 'var(--btn-default-color)',
+  },
+
 };
 
 const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChange, licenseTypeMap, openEvidenceModal }) => {
   const [displayedRows, setDisplayedRows] = useState([]);
+  const [selectedLicenseTypes, setSelectedLicenseTypes] = useState({});
+  const [isHovered, setIsHovered] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,14 +87,39 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
     return () => clearTimeout(timer);
   }, [displayedRows, selectedppList]);
 
+  useEffect(() => {
+    const initialSelectedLicenseTypes = {};
+    selectedppList.forEach(obj => {
+      initialSelectedLicenseTypes[obj.id] = licenseTypeMap.get(obj.id);
+    });
+    setSelectedLicenseTypes(initialSelectedLicenseTypes);
+  }, [selectedppList, licenseTypeMap]);
+
+  const handleLicenseTypeClick = (id, type) => {
+    setSelectedLicenseTypes(prevState => ({
+      ...prevState,
+      [id]: type
+    }));
+    handleLTypeChange(id, type);
+  };
+
   return (
     <div style={styles.dataTbl}>
+      {modalShow && 
+        <ExceptionModal
+          show = {modalShow}
+          onHide={() => setModalShow(false)}
+      />}
       <div style={styles.tableHeader}>
         <div style={{ ...styles.tableHeaderCell, ...styles.index }}>#</div>
-        <div style={{ ...styles.tableHeaderCell, ...styles.licenseType }}>licenseType</div>
+        <div style={{ ...styles.tableHeaderCell, width: '11%'}}>licenseType</div>
         <div style={{ ...styles.tableHeaderCell, ...styles.productName }}>productName</div>
         <div style={{ ...styles.tableHeaderCell, ...styles.publisher }}>publisher</div>
-        <div style={{ ...styles.tableHeaderCell, ...styles.licenseType }}>exceptions</div>
+        <div style={{ ...styles.tableHeaderCell, ...styles.licenseType, ...(isHovered && styles.exception) }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => setModalShow(true)}
+          >exception</div>
         <div style={{ ...styles.tableHeaderCell, ...styles.licenseType }}>fastText</div>
         <div style={{ ...styles.tableHeaderCell, ...styles.licenseType }}>llm</div>
         <div style={{ ...styles.tableHeaderCell, ...styles.evidences }}>evidences</div>
@@ -100,30 +144,29 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
                 }}
               >
                 <div style={{ ...styles.tableCell, ...styles.index }}>{(currentPage - 1) * itemsPerPage + index + 1}</div>
-                <div style={{ ...styles.tableCell, ...styles.licenseType }}>
-                  <CustomSelect
-                    id={obj.id}
-                    options={[
-                      { value: "FREE", label: "FREE" },
-                      { value: "SHAREWARE", label: "SHAREWARE" },
-                      { value: "COMMERCIAL", label: "COMMERCIAL" },
-                      { value: "ETC", label: "ETC" },
-                      { value: "NONE", label: "NONE" }
-                    ]}
-                    myFontSize="14px"
-                    handleSelectChange={handleLTypeChange}
-                    selectedValue={licenseTypeMap.get(obj.id)}
-                    fontColor="#1d2023"
-                    backgroundColor={'var(--white)'}
-                    selectedBackgroundColor="#1d2023"
-                    selectedColor={'var(--white)'}
-                    hoverColor={'var(--white)'}
-                    hoverBackgroundColor={'rgba(29, 32, 35, 0.5)'}
-                    width={100}
-                    controlColor={'var(--default-text-color)'}
-                    controlBackgroundColor={'rgba(0)'}
-                    menuPlacement={"bottom"}
-                  />
+                <div style={{ ...styles.tableCell, cursor: 'pointer', width: '11%'}}>
+                  <div style={{textAlign:'left'}}>
+                    <div onClick={() => handleLicenseTypeClick(obj.id, 'FREE')}>
+                      {selectedLicenseTypes[obj.id] === 'FREE' ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                      <span>FREE</span>
+                    </div>
+                    <div onClick={() => handleLicenseTypeClick(obj.id, 'SHAREWARE')}>
+                      {selectedLicenseTypes[obj.id] === 'SHAREWARE' ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                      SHAREWARE
+                    </div>
+                    <div onClick={() => handleLicenseTypeClick(obj.id, 'COMMERCIAL')}>
+                      {selectedLicenseTypes[obj.id] === 'COMMERCIAL' ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                      COMMERCIAL
+                    </div>
+                    <div onClick={() => handleLicenseTypeClick(obj.id, 'ETC')}>
+                      {selectedLicenseTypes[obj.id] === 'ETC' ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                      ETC
+                    </div>
+                    <div onClick={() => handleLicenseTypeClick(obj.id, 'NONE')}>
+                      {selectedLicenseTypes[obj.id] === 'NONE' ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                      NONE
+                    </div>
+                  </div>
                 </div>
                 {Object.entries(JSON.parse(obj.patterns)).map(([key, value]) => (
                   <React.Fragment key={key}>
@@ -135,14 +178,14 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
                     )}
                   </React.Fragment>
                 ))}
-                <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? 'Yes' : 'No'}</div>
+                <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? obj.exceptionType : 'No'}</div>
                 <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? "-" : obj.fastText}</div>
                 <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? "-" : obj.llm}</div>
-                <div style={{ ...styles.tableCell, ...styles.evidences }}>
+                <ul style={{ ...styles.tableCell, ...styles.evidences }}>
                   { !obj.exceptions  && obj.evidences && obj.evidences !== "" && JSON.parse(obj.evidences).map((evidence, index) => (
-                    <button className='evdBtn' key={index} onClick={() => openEvidenceModal(evidence)}>{evidence.title}</button>
+                    <li className='evdBtn' style={{ ...styles.evidencesBtn }} key={index} onClick={() => openEvidenceModal(evidence)}>{evidence.title}</li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
           </Motion>

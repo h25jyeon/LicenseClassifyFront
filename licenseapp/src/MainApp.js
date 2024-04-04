@@ -5,6 +5,8 @@ import Pagination from 'react-js-pagination'
 
 import { PiExportBold } from "react-icons/pi";
 import { LuFilePlus2 } from "react-icons/lu";
+import { MdCheckBox } from "react-icons/md";
+import { MdCheckBoxOutlineBlank } from "react-icons/md";
 
 import './Pagination.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
@@ -15,7 +17,7 @@ import CustomSelect from './CustomSelect';
 import { useDarkMode } from './DarkMode';
 import CustomButton from "./CustomButton"
 import DataTable from './DataTable';
-import StarComponent from './StarComponent';
+// import StarComponent from './StarComponent';
 
 import './MainApp.css';
 import './Toggle.css';
@@ -28,6 +30,11 @@ function MainApp() {
   const [selectedWSId, setSelectedWSId] = useState('');
   const [selectedppList, setSelectedPPList] = useState([]);
   const [licenseTypeMap, setLicenseTypeMap] = useState(new Map());
+
+  const [isScrolledToTop, setIsScrolledToTop] = useState(true);
+  const [AIClassifiedFilter, setAIClassifiedFilter] = useState(false);
+  const [reviewNeededFilter, setReviewNeededFilter] = useState(false);
+  const [exceptionFilter, setExceptionFilter] = useState(false);
 
   const [evidencesIsOpen, setEvidencesIsOpen] = useState(false);
   const [selectedEvidence, setSelectedEvidence] = useState(null);
@@ -47,7 +54,8 @@ function MainApp() {
       console.log("selectedWSId change ",selectedWSId);
       fetchProductPattern(selectedWSId);
     }
-  }, [selectedWSId, currentPage, itemsPerPage]);
+  }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter]);
+
 
   useEffect(() => {
     if (darkMode) {
@@ -56,6 +64,21 @@ function MainApp() {
       setControlColor('#1d2023');
     }
   }, [darkMode]);
+
+  
+  useEffect(() => {
+    function handleScroll() {
+      const scrollTop = window.pageYOffset;
+      setIsScrolledToTop(scrollTop === 0);
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
 
   const fetchWorkingSet = ()  => {
     fetch('http://192.168.11.66:8080/working-set', {
@@ -75,9 +98,18 @@ function MainApp() {
     });
   };
 
+
   const fetchProductPattern = () => {
     setLoading(true);
-    fetch(`http://192.168.11.66:8080/product-pattern/${selectedWSId}?page=${currentPage}&size=${itemsPerPage}`, {
+    const queryParams = new URLSearchParams({
+      page: currentPage,
+      size: itemsPerPage,
+      classified: AIClassifiedFilter,
+      reviewNeeded: reviewNeededFilter,
+      isException: exceptionFilter
+    });
+
+    fetch(`http://192.168.11.66:8080/product-pattern/${selectedWSId}?${queryParams}`, {
       method: 'GET'
     })
       .then(response => response.json())
@@ -160,17 +192,51 @@ function MainApp() {
     setSelectedEvidence(null);
   };
 
+  const options = workingSet.map(ws => {
+    const label = ws.name.replace(/\t/g, '    '); 
+    return { value: ws.id, label: label };
+  });
+
   return (
     <div className="MainApp">
       {/* <div className='starts'>
         <StarComponent/>
       </div> */}
+
+      <div className={`filterBox ${isScrolledToTop ? '' : 'scrolled'}`}>
+        <div onClick={() => {
+          setAIClassifiedFilter(!AIClassifiedFilter);
+          setCurrentPage(1); 
+        }}>
+          {AIClassifiedFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+          <span>AI Classified</span>
+        </div>
+
+        <div onClick={() => {
+          setReviewNeededFilter(!reviewNeededFilter);
+          setCurrentPage(1); 
+        }}>
+          {reviewNeededFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+          <span>Review Needed</span>
+        </div>
+
+        <div onClick={() => {
+          setExceptionFilter(!exceptionFilter);
+          setCurrentPage(1); 
+        }}>
+          {exceptionFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+          <span>NonException</span>
+        </div>
+      </div>
+
       <div className='darkModeToggleBox'>
         <label>
           <input onChange={toggleDarkMode} type='checkbox' id='toggle'></input>
           <div className='toggle-wrapper'><span className='selector'></span></div>
         </label>
       </div>
+
+
       {modalShow && (
         <FileUploadModal
           fileuploaded = {setSelectedWSId}
@@ -190,7 +256,8 @@ function MainApp() {
       <div className='menuBox'>
       {selectedWSId && (
         <CustomSelect 
-          options={workingSet.map(ws => ({ value: ws.id, label: ws.name}))} 
+          {...console.log(workingSet.map(ws => ({ value: ws.id, label: ws.name})))}
+          options={options} 
           myFontSize="14px" 
           handleSelectChange={handleSelectChange} 
           selectedValue={selectedWSId} 
@@ -215,7 +282,7 @@ function MainApp() {
         </div>
         {selectedWSId && 
           <div className = 'exportBtn'>
-            <div className = 'btnBox' onClick={handleExportClick}>
+            <div className = 'btnBox'>
               <CustomButton
                 handleOnClick = {handleExportClick}
                 icon = {PiExportBold}

@@ -8,6 +8,7 @@ function FileUploadModal(props) {
   const [taskName, setTaskName] = useState('');
   const [loading, setLoading] = useState(false); 
   const [uuid, setUuid] = useState('');
+  const [responseData, setResponseData] = useState(null);
 
   useEffect(() => {
     if (uuid !== '') handleFileUploaded();
@@ -41,7 +42,8 @@ function FileUploadModal(props) {
           throw new Error('Network response was not ok.');
         }
         const data = await response.json();
-        setUuid(data);
+        setUuid(data.id);
+        setResponseData(data);
         console.log('서버 응답:', data);
       } catch (error) {
         console.error('There was an error!', error);
@@ -79,9 +81,18 @@ function FileUploadModal(props) {
           <Spinner animation="border" role="status">
             <span className="sr-only"></span>
           </Spinner>
-        ) : (
-          <div className = 'btnSubmit' onClick={handleUpload}>Upload</div>
-        )}
+        ) :(
+              <>
+              {responseData ? (
+                  <div>
+                  <p>Added: {responseData.added}</p>
+                  <p>Ignored: {responseData.ignored}</p>
+                  </div>
+              ) : (
+                  <div className='btnSubmit' onClick={handleUpload}>Upload</div>
+              )}
+              </>
+          )}
       </Modal.Footer>
     </Modal>
   );

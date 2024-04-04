@@ -4,9 +4,10 @@
   --font-SpoqaHanSansNeo-Regular: 'SpoqaHanSansNeo-Regular';
   --font-SpoqaHanSansNeo-Medium: 'SpoqaHanSansNeo-Medium';
 
-  --main-background-color:linear-gradient(-135deg,   #ffffff, #eafaff, #d1edff, #e7f9ff, #ffffff);
-  --gray-background-color: rgba(0, 0, 0, 0.01);
-  --light-gray-background-color: rgba(0, 0, 0, 0.03);
+  --main-background-color:linear-gradient(-135deg,   #ffffff, rgb(241, 250, 253), #f2f9fd, #fdfeff, #ffffff);
+  --gray-background-color: rgba(0, 140, 255, 0.01);
+  --light-gray-background-color: rgba(0, 140, 255, 0.03);
+  --filter-background-color: #dff3ffa8;
   --border-color: #969696;
   --white: #fff;
   --text-decoration-color: #000;
@@ -26,10 +27,11 @@ html.dark {
   --main-background-color: linear-gradient(-135deg,    #020014, #0f0c29, #302b63, #24243e,  #020013);
   --gray-background-color: rgba(255, 255, 255, 0.03);
   --light-gray-background-color: rgba(255, 255, 255, 0.07);
+  --filter-background-color: #302979c0;
   --border-color: rgba(248, 208, 89, 0);
   --white: #fff;
   --text-decoration-color: #000;
-  --gray-text-color: #838383;
+  --gray-text-color: #bfc7da;
   --default-text-color: #D6DFF5;
   --btn-text-color: #fff;
   --btn-default-color:  #fb6c44c4;

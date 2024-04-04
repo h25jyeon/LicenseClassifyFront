@@ -11,6 +11,7 @@ class CustomSelect extends React.Component {
   
   handleSelectChange = (selectedOption) => {
     const { handleSelectChange, id } = this.props;
+    console.log(selectedOption.value);
     handleSelectChange(id, selectedOption.value);
     this.setState({ selectedValue: selectedOption.value }); 
   };
@@ -20,11 +21,10 @@ class CustomSelect extends React.Component {
             selectedBackgroundColor, controlBackgroundColor, hoverBackgroundColor, width, menuPlacement } = this.props;
     const { selectedValue } = this.state;
 
-    
-
     const styles = {
       option: (provided, state) => ({
         ...provided,
+        whiteSpace: 'pre',
         fontFamily: state.isSelected ? 'var(--font-SpoqaHanSansNeo-Medium)' : 'var(--font-SpoqaHanSansNeo-Regular)',
         color: state.isSelected ? selectedColor : fontColor,
         backgroundColor: state.isSelected ? selectedBackgroundColor : backgroundColor,
@@ -38,6 +38,7 @@ class CustomSelect extends React.Component {
       control: (provided, state) => ({
         ...provided,
         width: width,
+        whiteSpace: 'pre',
         backgroundColor: controlBackgroundColor,
         color: controlColor,
         borderColor: state.isFocused ? 'var(--btn-default-color)' : 'rgba(0,0,0,0)',
@@ -48,10 +49,12 @@ class CustomSelect extends React.Component {
       }),
       placeholder: () => ({
         color: controlColor, 
+        whiteSpace: 'pre',
         fontSize: myFontSize
       }),
       singleValue: (provided) => ({
         ...provided,
+        whiteSpace: 'pre',
         color: controlColor, 
         fontSize: myFontSize
       }),
