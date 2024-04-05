@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Motion, spring } from 'react-motion';
 import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import ExceptionModal from './ExceptionModal'; 
 
 const styles = {
@@ -68,11 +69,13 @@ const styles = {
 
 };
 
-const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChange, licenseTypeMap, openEvidenceModal }) => {
+const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChange, licenseTypeMap, openEvidenceModal, handleDelete }) => {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [selectedLicenseTypes, setSelectedLicenseTypes] = useState({});
   const [isHovered, setIsHovered] = useState(false);
   const [modalShow, setModalShow] = useState(false);
+  const [deleteHover, setDeleteHover] = useState(false);
+  const [hoverIndex, setHoverIndex] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -101,6 +104,22 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
       [id]: type
     }));
     handleLTypeChange(id, type);
+  };
+
+  const handleIndexMouseEnter = (index) => { 
+    setDeleteHover(true);
+    setHoverIndex(index); 
+  };
+
+  const handleIndexMouseLeave = () => {
+    setDeleteHover(false);
+    setHoverIndex(null); 
+  };
+
+  const handleDeleteConfirmation = (objId, dataIndex) => {
+    if (window.confirm(`"${dataIndex}"번째 데이터를 삭제하시겠습니까?`)) {
+      handleDelete(objId);
+    }
   };
 
   return (
@@ -143,7 +162,22 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
                   transform: `translateY(${style.translateY}px)`
                 }}
               >
-                <div style={{ ...styles.tableCell, ...styles.index }}>{(currentPage - 1) * itemsPerPage + index + 1}</div>
+                <div
+                  style={{
+                    ...styles.tableCell,
+                    ...styles.index,
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={() => handleIndexMouseEnter((currentPage - 1) * itemsPerPage + index + 1)} 
+                  onMouseLeave={handleIndexMouseLeave}
+                  onClick={() => handleDeleteConfirmation(obj.id, (currentPage - 1) * itemsPerPage + index + 1)}
+                >
+                  {deleteHover && hoverIndex === (currentPage - 1) * itemsPerPage + index + 1 ? (
+                    <RiDeleteBin6Line/>
+                  ) : (
+                    (currentPage - 1) * itemsPerPage + index + 1
+                  )}
+                </div>
                 <div style={{ ...styles.tableCell, cursor: 'pointer', width: '11%'}}>
                   <div style={{textAlign:'left'}}>
                     <div onClick={() => handleLicenseTypeClick(obj.id, 'FREE')}>

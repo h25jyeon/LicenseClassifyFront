@@ -181,6 +181,19 @@ function MainApp() {
     } 
   };
 
+  const handleDelete = (objId) => {
+    axios.delete(`http://192.168.11.66:8080/product-pattern/${objId}`)
+      .then(response => {
+        alert('삭제되었습니다.'); 
+        console.log(response.data); 
+        fetchProductPattern();
+      })
+      .catch(error => {
+        alert('삭제에 실패했습니다.'); 
+        console.error('삭제 중 오류 발생:', error);
+      });
+  };
+
   const openEvidenceModal = (item) => {
     console.log(item);
     setSelectedEvidence(item);
@@ -310,6 +323,7 @@ function MainApp() {
             handleLTypeChange={handleLTypeChange}
             licenseTypeMap={licenseTypeMap}
             openEvidenceModal={openEvidenceModal}
+            handleDelete = {handleDelete}
           />
           <Pagination
             activePage={currentPage}
