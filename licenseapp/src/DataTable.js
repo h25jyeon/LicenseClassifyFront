@@ -3,7 +3,8 @@ import { Motion, spring } from 'react-motion';
 import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import ExceptionModal from './ExceptionModal'; 
+import ExceptionModal from './modal/ExceptionModal'; 
+import CustomTootip from './custom/CustomTootip';
 
 const styles = {
   dataTbl: {
@@ -11,6 +12,7 @@ const styles = {
     margin: '20px auto',
     width: '100%',
     backgroundColor: 'var(--gray-background-color)',
+    cursor:'default',
   },
   tableHeader: {
     display: 'flex',
@@ -76,6 +78,7 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
   const [modalShow, setModalShow] = useState(false);
   const [deleteHover, setDeleteHover] = useState(false);
   const [hoverIndex, setHoverIndex] = useState(null);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -104,6 +107,16 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
       [id]: type
     }));
     handleLTypeChange(id, type);
+  };
+
+  const handleMouseEnter = (index) => {
+    setIsTooltipVisible(true);
+    setHoverIndex(index); 
+  };
+
+  const handleMouseLeave = () => {
+    setIsTooltipVisible(false);
+    setHoverIndex(null); 
   };
 
   const handleIndexMouseEnter = (index) => { 
@@ -212,7 +225,16 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
                     )}
                   </React.Fragment>
                 ))}
-                <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? obj.exceptionType : 'No'}</div>
+                <div 
+                  style={{ ...styles.tableCell, ...styles.licenseType }}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {obj.exceptions ? obj.exceptionType : 'No'}
+                  {obj.exceptions && isTooltipVisible  && hoverIndex === index && (
+                    <CustomTootip exceptionType={obj.exceptionType} /> 
+                  )}
+                </div>
                 <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? "-" : obj.fastText}</div>
                 <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? "-" : obj.llm}</div>
                 <ul style={{ ...styles.tableCell, ...styles.evidences }}>

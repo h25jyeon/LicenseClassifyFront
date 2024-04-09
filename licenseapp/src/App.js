@@ -1,8 +1,8 @@
 import React from 'react';
 import MainApp from './MainApp';
-import './App.css';
-import './MainApp.css';
-import './Toggle.css';
+import './css/App.css';
+import './css/MainApp.css';
+import './css/Toggle.css';
 
 function App() {
 

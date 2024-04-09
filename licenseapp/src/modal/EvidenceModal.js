@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
-import './App.css';
+
+const styles = {
+  evidencesBtn: {
+    maxWidth: '100%', 
+    overflow: 'hidden', 
+    textOverflow: 'ellipsis', 
+    whiteSpace: 'nowrap',
+    paddingBottom: '10px',
+    cursor: 'pointer',
+  },
+}
 
 function EvidenceModal(props) {
   const [evidence, setEvidence] = useState(null);
@@ -29,7 +39,7 @@ function EvidenceModal(props) {
         </Modal.Body>
         <Modal.Footer>
           {evidence && 
-            <a target='_blank' rel="noreferrer" href={evidence.url}>{evidence.url}</a>
+            <a style = {{...styles.evidencesBtn}} target='_blank' rel="noreferrer" href={evidence.url}>{evidence.url}</a>
           }
         </Modal.Footer>
     </Modal>

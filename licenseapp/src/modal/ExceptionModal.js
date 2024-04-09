@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Spinner } from 'react-bootstrap';
-import './App.css';
-import './CustomModal.css';
-import CustomSelect from './CustomSelect';
+import '../css/App.css';
+import '../css/CustomModal.css';
+import CustomSelect from '../custom/CustomSelect';
 
 function ExceptionModal(props) {
   const [selectedFile, setSelectedFile] = useState(null);

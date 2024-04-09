@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Motion, spring } from "react-motion";
-import "./CustomButton.css";
+import "../css/CustomButton.css";
 
 class CustomButton extends Component {
   constructor(props) {

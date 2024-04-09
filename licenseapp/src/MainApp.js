@@ -8,19 +8,18 @@ import { LuFilePlus2 } from "react-icons/lu";
 import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 
-import './Pagination.css';
-import '../node_modules/bootstrap/dist/css/bootstrap.css'
-
-import FileUploadModal from './FileUploadModal'; 
-import EvidenceModal from './EvidenceModal'; 
-import CustomSelect from './CustomSelect';
+import FileUploadModal from './modal/FileUploadModal'; 
+import EvidenceModal from './modal/EvidenceModal'; 
+import CustomSelect from './custom/CustomSelect';
 import { useDarkMode } from './DarkMode';
-import CustomButton from "./CustomButton"
+import CustomButton from "./custom/CustomButton"
 import DataTable from './DataTable';
 // import StarComponent from './StarComponent';
 
-import './MainApp.css';
-import './Toggle.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.css'
+import './css/Pagination.css';
+import './css/MainApp.css';
+import './css/Toggle.css';
 
 function MainApp() {
   const { darkMode, toggleDarkMode } = useDarkMode();
@@ -51,7 +50,7 @@ function MainApp() {
 
   useEffect(() => {
     if (selectedWSId) {
-      console.log("selectedWSId change ",selectedWSId);
+      console.log("selectedWSId change",selectedWSId);
       fetchProductPattern(selectedWSId);
     }
   }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter]);

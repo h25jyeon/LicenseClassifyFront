@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { Modal, Spinner } from 'react-bootstrap';
-import './App.css';
-import './CustomModal.css';
+import '../css/App.css';
+import '../css/CustomModal.css';
 
 function FileUploadModal(props) {
   const [selectedFile, setSelectedFile] = useState(null);
