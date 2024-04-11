@@ -130,7 +130,8 @@ function MainApp() {
   };
 
   const handleExportClick = () => {
-    fetch(`http://192.168.11.66:8080/product-pattern/download/${selectedWSId}`)
+    if (window.confirm(`"${workingSet.find(item => item.id === selectedWSId).name}" 내려받기`)) {
+      fetch(`http://192.168.11.66:8080/product-pattern/download/${selectedWSId}`)
       .then(response => response.blob())
       .then(blob => {
         const url = window.URL.createObjectURL(new Blob([blob]));
@@ -144,6 +145,7 @@ function MainApp() {
         window.URL.revokeObjectURL(url);
       })
       .catch(error => console.error('Error downloading file', error));
+    }
   }
 
   const handleSelectChange = (id, value) => {
