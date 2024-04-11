@@ -7,6 +7,7 @@ import { PiExportBold } from "react-icons/pi";
 import { LuFilePlus2 } from "react-icons/lu";
 import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { TbFilterX } from "react-icons/tb";
 
 import FileUploadModal from './modal/FileUploadModal'; 
 import EvidenceModal from './modal/EvidenceModal'; 
@@ -359,6 +360,13 @@ function MainApp() {
             />
           </div>
           <p className = "pageNum">{currentPage} of {Math.ceil(totalItemsCount / itemsPerPage)}</p>
+        </div>
+      )}
+
+      {!loading && selectedppList.length < 1 && (
+        <div className='noData'>
+          <p><TbFilterX style={{ fontSize: '40px' }} /></p>
+          No records found
         </div>
       )}
     </div>

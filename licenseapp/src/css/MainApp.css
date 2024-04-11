@@ -92,3 +92,9 @@
   width:fit-content;
   margin: 100px auto;
 }
+
+.noData {
+  font-size: 30px;
+  margin-top: 17%;
+  text-align: center;
+}

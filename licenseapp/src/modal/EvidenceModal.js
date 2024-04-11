@@ -3,12 +3,12 @@ import { Modal } from 'react-bootstrap';
 
 const styles = {
   evidencesBtn: {
-    maxWidth: '100%', 
-    overflow: 'hidden', 
-    textOverflow: 'ellipsis', 
-    whiteSpace: 'nowrap',
-    paddingBottom: '10px',
-    cursor: 'pointer',
+  maxWidth: '100%', 
+  overflow: 'hidden', 
+  textOverflow: 'ellipsis', 
+  whiteSpace: 'nowrap',
+  paddingBottom: '10px',
+  cursor: 'pointer',
   },
 }
 
