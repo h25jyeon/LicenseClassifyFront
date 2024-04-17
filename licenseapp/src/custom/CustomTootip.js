@@ -13,7 +13,6 @@ const CustomTooltip = ({ exceptionType }) => {
 
   return (
     <>
-      {console.log(tooltipContents[exceptionType])}
       {showTooltip && (
         <Motion
           defaultStyle={{ opacity: 0 }}
