@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Spinner } from 'react-bootstrap';
 import '../css/App.css';
 import '../css/CustomModal.css';
@@ -10,9 +10,21 @@ function FileUploadModal(props) {
   const [uuid, setUuid] = useState('');
   const [responseData, setResponseData] = useState(null);
 
+  const handleCloseModal = useCallback(() => {
+    setTaskName('');
+    props.onHide();
+  }, [props]);
+
+  const handleFileUploaded = useCallback(() => {
+    props.fileuploaded(uuid);
+    handleCloseModal();
+  }, [uuid, handleCloseModal, props]);
+
   useEffect(() => {
-    if (uuid !== '') handleFileUploaded();
-  }, [uuid]);
+    if (uuid !== '') {
+      handleFileUploaded();
+    }
+  }, [uuid, handleFileUploaded]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -53,16 +65,6 @@ function FileUploadModal(props) {
     } else {
       alert('파일을 선택해주세요.');
     }
-  };
-
-  const handleFileUploaded = () => {
-    props.fileuploaded(uuid);
-    handleCloseModal();
-  }
-
-  const handleCloseModal = () => {
-    setTaskName('');
-    props.onHide();
   };
 
   return (
