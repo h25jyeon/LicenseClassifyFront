@@ -8,6 +8,15 @@ class CustomSelect extends React.Component {
       selectedValue: this.props.selectedValue 
     };
   }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.selectedValue !== prevState.selectedValue) {
+      return {
+        selectedValue: nextProps.selectedValue
+      };
+    }
+    return null;
+  }
   
   handleSelectChange = (selectedOption) => {
     const { handleSelectChange, id } = this.props;
