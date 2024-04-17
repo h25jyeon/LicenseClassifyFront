@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect, useCallback  } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import axios from 'axios';
 import Pagination from 'react-js-pagination'
@@ -8,6 +8,7 @@ import { LuFilePlus2 } from "react-icons/lu";
 import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { TbFilterX } from "react-icons/tb";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 import FileUploadModal from './modal/FileUploadModal'; 
 import EvidenceModal from './modal/EvidenceModal'; 
@@ -43,20 +44,66 @@ function MainApp() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [controlColor, setControlColor] = useState('#fff');
-
-
+  
   useEffect(() => {
+    const fetchWorkingSet = () => {
+      fetch('http://192.168.11.66:8080/working-set', {
+        method: 'GET'
+      })
+      .then(response => {
+        if (response.ok) return response.json();
+        throw new Error('Network response was not ok.');
+      })
+      .then(data => {
+        console.log('fetchWorkingSet 서버 응답:', data);
+        setWorkingSet(data);
+        if (!selectedWSId) setSelectedWSId(data[0].id)
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+    };
+  
     fetchWorkingSet();
-  },[]);
+  }, [selectedWSId]);
+
+  const fetchProductPattern = useCallback(() => {
+    setLoading(true);
+    const queryParams = new URLSearchParams({
+      page: currentPage,
+      size: itemsPerPage,
+      classified: AIClassifiedFilter,
+      reviewNeeded: reviewNeededFilter,
+      isException: exceptionFilter
+    });
+
+    fetch(`http://192.168.11.66:8080/product-pattern/${selectedWSId}?${queryParams}`, {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+      setSelectedPPList(data.data);
+      setTotalItemsCount(data.pageInfo.totalElements);
+      setLicenseTypeMap(new Map(data.data.map(obj => [obj.id, obj.licenseType || 'NONE'])));
+    })
+    .catch(error => {
+      setSelectedPPList([]);
+      setLicenseTypeMap(new Map());
+      console.error('Error fetching objects : ', error);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter]);
 
   useEffect(() => {
     if (selectedWSId) {
-      console.log("selectedWSId change",selectedWSId);
-      fetchProductPattern(selectedWSId);
+      console.log("Fetching Product Pattern using working set ID : ", selectedWSId);
+      fetchProductPattern();
     }
-  }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter]);
+  }, [selectedWSId, fetchProductPattern]);
 
-
+  
   useEffect(() => {
     if (darkMode) {
       setControlColor('#fff');
@@ -79,57 +126,28 @@ function MainApp() {
     };
   }, []);
 
+  const handleSetDeleteClick = async () => {
+    if (window.confirm(`"${workingSet.find(item => item.id === selectedWSId).name}"를 영구적으로 삭제하겠습니까?`)) {
+      try {
+        const response = await fetch(`http://192.168.11.66:8080/working-set?workingSetId=${selectedWSId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+  
+        if (response.ok) {
+          alert(await response.text());
+          window.location.reload();
+        } else {
+          alert("요청 실패");
+        }
+      } catch (error) {
+        console.error('네트워크 오류:', error);
+        alert("네트워크 오류가 발생했습니다.");
+      }
+    }
+  }
 
-  const fetchWorkingSet = ()  => {
-    fetch('http://192.168.11.66:8080/working-set', {
-      method: 'GET'
-    })
-    .then(response => {
-      if (response.ok) return response.json();
-      throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-      console.log('서버 응답:', data);
-      setWorkingSet(data);
-      setSelectedWSId(data[0].id)
-    })
-    .catch(error => {
-      console.error('There was an error!', error);
-    });
-  };
-
-
-  const fetchProductPattern = () => {
-    setLoading(true);
-    const queryParams = new URLSearchParams({
-      page: currentPage,
-      size: itemsPerPage,
-      classified: AIClassifiedFilter,
-      reviewNeeded: reviewNeededFilter,
-      isException: exceptionFilter
-    });
-
-    fetch(`http://192.168.11.66:8080/product-pattern/${selectedWSId}?${queryParams}`, {
-      method: 'GET'
-    })
-      .then(response => response.json())
-      .then(data => {
-        setSelectedPPList(data.data);
-        setTotalItemsCount(data.pageInfo.totalElements);
-        
-        setLicenseTypeMap(new Map(data.data.map(obj => [obj.id, obj.licenseType || 'NONE'])));
-      })
-      .catch(error => {
-        setSelectedPPList([]);
-        setLicenseTypeMap(new Map());
-        console.error('Error fetching objects:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const handleExportClick = () => {
+  const handleExportClick = async () => {
     if (window.confirm(`"${workingSet.find(item => item.id === selectedWSId).name}" 내려받기`)) {
       fetch(`http://192.168.11.66:8080/product-pattern/download/${selectedWSId}`)
       .then(response => response.blob())
@@ -154,9 +172,9 @@ function MainApp() {
       setSelectedWSId(value);
     }
   }
-  
+
   const handlePageChange = pageNumber => {
-    console.log(pageNumber);
+    console.log("selected page number : ", pageNumber);
     setCurrentPage(pageNumber);
   };
   
@@ -183,7 +201,7 @@ function MainApp() {
     } 
   };
 
-  const handleDelete = (objId) => {
+  const handleItemDelete = (objId) => {
     axios.delete(`http://192.168.11.66:8080/product-pattern/${objId}`)
       .then(response => {
         alert('삭제되었습니다.'); 
@@ -246,7 +264,7 @@ function MainApp() {
 
       <div className='darkModeToggleBox'>
         <label>
-          <input onChange={toggleDarkMode} type='checkbox' id='toggle'></input>
+          <input onChange={toggleDarkMode} checked={darkMode} type='checkbox' id='toggle'></input>
           <div className='toggle-wrapper'><span className='selector'></span></div>
         </label>
       </div>
@@ -254,8 +272,8 @@ function MainApp() {
 
       {modalShow && (
         <FileUploadModal
-          fileuploaded = {setSelectedWSId}
-          show = {modalShow}
+          fileuploaded={(wsId) => setSelectedWSId(wsId)}
+          show={modalShow}
           onHide={() => setModalShow(false)}
         />
       )}
@@ -271,7 +289,6 @@ function MainApp() {
       <div className='menuBox'>
       {selectedWSId && (
         <CustomSelect 
-          {...console.log(workingSet.map(ws => ({ value: ws.id, label: ws.name})))}
           options={options} 
           myFontSize="14px" 
           handleSelectChange={handleSelectChange} 
@@ -288,11 +305,20 @@ function MainApp() {
           menuPlacement = {"bottom"}
         />
       )}
+        <div className = 'deleteBtn'>
+          <CustomButton
+            handleOnClick = {handleSetDeleteClick}
+            icon = {RiDeleteBin6Line}
+            text = {"Delete All Tasks"}
+            width = {150}
+          />
+        </div>
         <div className = 'uploadBtn'>
           <CustomButton
             handleOnClick = {() => setModalShow(true)}
             icon = {LuFilePlus2}
             text = {"Csv Upload"}
+            width = {125}
           />
         </div>
         {selectedWSId && 
@@ -302,6 +328,7 @@ function MainApp() {
                 handleOnClick = {handleExportClick}
                 icon = {PiExportBold}
                 text = {"Csv Export"}
+                width = {125}
               />
             </div>
           </div>
@@ -325,7 +352,7 @@ function MainApp() {
             handleLTypeChange={handleLTypeChange}
             licenseTypeMap={licenseTypeMap}
             openEvidenceModal={openEvidenceModal}
-            handleDelete = {handleDelete}
+            handleDelete = {handleItemDelete}
           />
           <Pagination
             activePage={currentPage}
