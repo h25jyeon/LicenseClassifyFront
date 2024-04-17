@@ -47,7 +47,7 @@ class CustomButton extends Component {
   };
 
   render() {
-    const { icon: Icon, text } = this.props;
+    const { icon: Icon, text, width } = this.props;
     const { hovered, showText, letterIndex } = this.state;
 
     const styles = {
@@ -90,7 +90,7 @@ class CustomButton extends Component {
       <Motion
         defaultStyle={{ width: 35, borderRadius : 100 }}
         style={{
-          width: spring(hovered ? (text.length * 13) : 35, { stiffness: 300, damping: 20 }),
+          width: spring(hovered ? (width) : 35, { stiffness: 300, damping: 20 }),
           borderRadius: spring(hovered ? 10 : 100, { stiffness: 500, damping: 27 }),
         }}
       >
