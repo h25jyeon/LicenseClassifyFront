@@ -2,19 +2,9 @@ import React from 'react';
 import { Motion, spring } from 'react-motion';
 
 const CustomTooltip = ({ exceptionType }) => {
-  const tooltipContents = {
-    'A': 'PRODUCT_MATCH',
-    'B': 'PUBLISHER_MATCH',
-    'C': 'PUBLISHER_EXACT_MATCH',
-    'D': 'PUBLISHER_PRODUCT_EXACT_MATCH'
-  };
-
-  const showTooltip = Object.keys(tooltipContents).includes(exceptionType);
-
-  return (
+ return (
     <>
-      {showTooltip && (
-        <Motion
+      <Motion
           defaultStyle={{ opacity: 0 }}
           style={{ opacity: spring(1) }}
         >
@@ -40,12 +30,11 @@ const CustomTooltip = ({ exceptionType }) => {
                   zIndex: '9'
                 }}
               >
-                <div>{tooltipContents[exceptionType]}</div>
+                <div>{exceptionType}</div>
               </div>
             </div>
           )}
         </Motion>
-      )}
     </>
   );
 };
