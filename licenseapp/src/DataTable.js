@@ -46,6 +46,7 @@ const styles = {
   licenseType: {
     width: '7%',
     textAlign: 'center',
+    wordWrap:'break-word',
   },
   productName: {
     width:'28%',
@@ -134,6 +135,17 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
       handleDelete(objId);
     }
   };
+
+  const changeExceptionTypeToLabel = (exceptionType) => {
+    const exceptionContents = {
+      'PRODUCT_MATCH' : 'A',
+      'PUBLISHER_MATCH' : 'B',
+      'PUBLISHER_EXACT_MATCH' : 'C',
+      'PUBLISHER_PRODUCT_EXACT_MATCH' : 'D'
+    };
+  
+    return exceptionContents[exceptionType];
+  }
 
   return (
     <div style={styles.dataTbl}>
@@ -230,9 +242,21 @@ const DataTable = ({ selectedppList, currentPage, itemsPerPage, handleLTypeChang
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={handleMouseLeave}
                 >
-                  {obj.exceptions ? obj.exceptionType : 'No'}
-                  {obj.exceptions && isTooltipVisible  && hoverIndex === index && (
-                    <CustomTootip exceptionType={obj.exceptionType} /> 
+                  {obj.exceptions && obj.exceptionKeyword ? 
+                    (obj.exceptionKeyword.publisher && obj.exceptionKeyword.product ? 
+                      `${changeExceptionTypeToLabel(obj.exceptionKeyword.type)} (${obj.exceptionKeyword.publisher} / ${obj.exceptionKeyword.product})` :
+                      (obj.exceptionKeyword.publisher ? 
+                        `${changeExceptionTypeToLabel(obj.exceptionKeyword.type)} (${obj.exceptionKeyword.publisher})` :
+                        (obj.exceptionKeyword.product ? 
+                          `${changeExceptionTypeToLabel(obj.exceptionKeyword.type)} (${obj.exceptionKeyword.product})` :
+                          changeExceptionTypeToLabel(obj.exceptionKeyword.type)
+                        )
+                      )
+                    )
+                    : 'No'
+                  }
+                  {obj.exceptionKeyword && isTooltipVisible  && hoverIndex === index && (
+                    <CustomTootip exceptionType={obj.exceptionKeyword.type} /> 
                   )}
                 </div>
                 <div style={{ ...styles.tableCell, ...styles.licenseType }}>{obj.exceptions ? "-" : obj.fastText}</div>
