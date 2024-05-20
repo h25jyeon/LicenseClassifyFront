@@ -71,6 +71,34 @@
   align-items: flex-end;
 }
 
+.searchBar {
+  background-color: rgba(0,0,0,0);
+  border: 2px solid var(--btn-default-color);
+  border-left: none;
+  border-radius: 0px 20px 20px 0px;
+  color: var(--default-text-color);
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  width: 15%;
+}
+
+.searchBar:focus {
+  outline: none;
+}
+
+.searchBtn {
+  background-color: rgba(0,0,0,0);
+  border: 2px solid var(--btn-default-color);
+  border-right: none;
+  border-radius: 20px 0px 0px 20px;
+  padding: 5px 10px;
+  color: var(--btn-default-color);
+}
+
+.searchBtn:active {
+  color: var(--btn-active-color);
+}
+
 .uploadBtn {
   flex-shrink: 0;
 }
@@ -97,4 +125,16 @@
   font-size: 30px;
   margin-top: 17%;
   text-align: center;
+}
+
+.icon {
+  background-image: url(../img/Moni_Icon_60x60_Black.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+}
+
+.dark .icon {
+  background-image: url(../img/Moni_Icon_60x60_white.png);
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback  } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import axios from 'axios';
 import Pagination from 'react-js-pagination'
@@ -9,9 +9,10 @@ import { MdCheckBox } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { TbFilterX } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaSearch } from "react-icons/fa";
 
-import FileUploadModal from './modal/FileUploadModal'; 
-import EvidenceModal from './modal/EvidenceModal'; 
+import FileUploadModal from './modal/FileUploadModal';
+import EvidenceModal from './modal/EvidenceModal';
 import CustomSelect from './custom/CustomSelect';
 import { useDarkMode } from './DarkMode';
 import CustomButton from "./custom/CustomButton"
@@ -26,12 +27,14 @@ import './css/Toggle.css';
 function MainApp() {
   const { darkMode, toggleDarkMode } = useDarkMode();
 
-  const [modalShow, setModalShow] = useState(false); 
+  const [modalShow, setModalShow] = useState(false);
   const [workingSet, setWorkingSet] = useState([]);
   const [selectedWSId, setSelectedWSId] = useState('');
   const [selectedppList, setSelectedPPList] = useState([]);
   const [licenseTypeMap, setLicenseTypeMap] = useState(new Map());
+  const [evidencesMap, setEvidencesMap] = useState(new Map());
 
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [isScrolledToTop, setIsScrolledToTop] = useState(true);
   const [AIClassifiedFilter, setAIClassifiedFilter] = useState(false);
   const [reviewNeededFilter, setReviewNeededFilter] = useState(false);
@@ -39,31 +42,33 @@ function MainApp() {
 
   const [evidencesIsOpen, setEvidencesIsOpen] = useState(false);
   const [selectedEvidence, setSelectedEvidence] = useState(null);
+  const [selectedEvidencePpId, setSelectedEvidencePpId] = useState('');
+  const [selectedEvidenceIdx, setSelectedEvidenceIdx] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [controlColor, setControlColor] = useState('#fff');
-  
+
   useEffect(() => {
     const fetchWorkingSet = () => {
       fetch('http://192.168.11.66:8080/working-set', {
         method: 'GET'
       })
-      .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Network response was not ok.');
-      })
-      .then(data => {
-        console.log('fetchWorkingSet 서버 응답:', data);
-        setWorkingSet(data);
-        if (!selectedWSId) setSelectedWSId(data[0].id)
-      })
-      .catch(error => {
-        console.error('There was an error!', error);
-      });
+        .then(response => {
+          if (response.ok) return response.json();
+          throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+          console.log('fetchWorkingSet 서버 응답:', data);
+          setWorkingSet(data);
+          if (!selectedWSId) setSelectedWSId(data[0].id)
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+        })
     };
-  
+    setLoading(true);
     fetchWorkingSet();
   }, [selectedWSId]);
 
@@ -74,27 +79,30 @@ function MainApp() {
       size: itemsPerPage,
       classified: AIClassifiedFilter,
       reviewNeeded: reviewNeededFilter,
-      isException: exceptionFilter
+      isException: !exceptionFilter,
+      keyword: searchKeyword
     });
 
     fetch(`http://192.168.11.66:8080/product-pattern/${selectedWSId}?${queryParams}`, {
       method: 'GET'
     })
-    .then(response => response.json())
-    .then(data => {
-      setSelectedPPList(data.data);
-      setTotalItemsCount(data.pageInfo.totalElements);
-      setLicenseTypeMap(new Map(data.data.map(obj => [obj.id, obj.licenseType || 'NONE'])));
-    })
-    .catch(error => {
-      setSelectedPPList([]);
-      setLicenseTypeMap(new Map());
-      console.error('Error fetching objects : ', error);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-  }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter]);
+      .then(response => response.json())
+      .then(data => {
+        setSelectedPPList(data.content);
+        setTotalItemsCount(data.totalElements);
+        setLicenseTypeMap(new Map(data.content.map(obj => [obj.id, obj.licenseType || 'NONE'])));
+        setEvidencesMap(new Map(data.content.map(obj => [obj.id, obj.evidences])))
+      })
+      .catch(error => {
+        setSelectedPPList([]);
+        setLicenseTypeMap(new Map());
+        setEvidencesMap(new Map());
+        console.error('Error fetching objects : ', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [selectedWSId, currentPage, itemsPerPage, AIClassifiedFilter, reviewNeededFilter, exceptionFilter,searchKeyword]);
 
   useEffect(() => {
     if (selectedWSId) {
@@ -103,7 +111,7 @@ function MainApp() {
     }
   }, [selectedWSId, fetchProductPattern]);
 
-  
+
   useEffect(() => {
     if (darkMode) {
       setControlColor('#fff');
@@ -112,7 +120,7 @@ function MainApp() {
     }
   }, [darkMode]);
 
-  
+
   useEffect(() => {
     function handleScroll() {
       const scrollTop = window.pageYOffset;
@@ -126,6 +134,11 @@ function MainApp() {
     };
   }, []);
 
+  const searchHandleChange = (value) => {
+    setSearchKeyword(value);
+    setCurrentPage(1);
+  }
+
   const handleSetDeleteClick = async () => {
     if (window.confirm(`"${workingSet.find(item => item.id === selectedWSId).name}"를 영구적으로 삭제하겠습니까?`)) {
       try {
@@ -133,7 +146,7 @@ function MainApp() {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
         });
-  
+
         if (response.ok) {
           alert(await response.text());
           window.location.reload();
@@ -150,19 +163,19 @@ function MainApp() {
   const handleExportClick = async () => {
     if (window.confirm(`"${workingSet.find(item => item.id === selectedWSId).name}" 내려받기`)) {
       fetch(`http://192.168.11.66:8080/product-pattern/download/${selectedWSId}`)
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const a = document.createElement('a');
-        a.href = url;
-        const selectedWSName = workingSet.find(item => item.id === selectedWSId)?.name || '라이선스_분류_data';
-        a.download = selectedWSName + '.csv';
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(new Blob([blob]));
+          const a = document.createElement('a');
+          a.href = url;
+          const selectedWSName = workingSet.find(item => item.id === selectedWSId)?.name || '라이선스_분류_data';
+          a.download = selectedWSName + '.csv';
 
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(error => console.error('Error downloading file', error));
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error('Error downloading file', error));
     }
   }
 
@@ -177,16 +190,16 @@ function MainApp() {
     console.log("selected page number : ", pageNumber);
     setCurrentPage(pageNumber);
   };
-  
-  const handleLTypeChange = (id, newOption ) => {
+
+  const handleLTypeChange = (id, newOption) => {
     console.log(id);
     console.log(newOption);
     sendLicenseTypeChange(id, newOption);
   };
-  
+
   const sendLicenseTypeChange = async (id, newOption) => {
     const formData = new FormData();
-        formData.append('newOption', newOption);
+    formData.append('newOption', newOption);
     try {
       const response = await axios.put(`http://192.168.11.66:8080/product-pattern/${id}`, formData, {
         headers: {
@@ -195,38 +208,68 @@ function MainApp() {
       });
       console.log('API Response:', response.data);
       licenseTypeMap.set(id, response.data);
-      console.log('licenseTypeMap :', licenseTypeMap.get(id) )
+      console.log('licenseTypeMap :', licenseTypeMap.get(id))
     } catch (error) {
       console.error('Error sending data to API:', error);
-    } 
+    }
   };
 
   const handleItemDelete = (objId) => {
     axios.delete(`http://192.168.11.66:8080/product-pattern/${objId}`)
       .then(response => {
-        alert('삭제되었습니다.'); 
-        console.log(response.data); 
+        alert('삭제되었습니다.');
+        console.log(response.data);
         fetchProductPattern();
       })
       .catch(error => {
-        alert('삭제에 실패했습니다.'); 
+        alert('삭제에 실패했습니다.');
         console.error('삭제 중 오류 발생:', error);
       });
   };
 
-  const openEvidenceModal = (item) => {
+  const handleEviScoreChange = (ppId, eviIdx, score) => {
+    axios.put(`http://192.168.11.66:8080/product-pattern/score/${ppId}?score=${score}&index=${eviIdx}`)
+      .then(response => {
+        console.log("Update evidence", ppId + ' : ' + response);
+
+        setEvidencesMap(prevMap => {
+          const newMap = new Map(prevMap);
+          const evidences = newMap.get(ppId);
+
+          if (evidences && evidences[eviIdx]) {
+            const updatedEvidence = { ...evidences[eviIdx], score: score };
+            const updatedEvidences = [...evidences];
+            updatedEvidences[eviIdx] = updatedEvidence;
+            newMap.set(ppId, updatedEvidences);
+          }
+
+          return newMap;
+        });
+
+      })
+      .catch(error => {
+        console.log(ppId + ' : ' + error);
+      })
+  }
+
+
+  const openEvidenceModal = (id, item, index) => {
     console.log(item);
+    setSelectedEvidencePpId(id);
     setSelectedEvidence(item);
     setEvidencesIsOpen(true);
+    setSelectedEvidenceIdx(index);
   };
 
   const closeEvidenceModal = () => {
     setEvidencesIsOpen(false);
+    setSelectedEvidencePpId('');
     setSelectedEvidence(null);
+    setSelectedEvidenceIdx('');
   };
 
   const options = workingSet.map(ws => {
-    const label = ws.name.replace(/\t/g, '    '); 
+    const label = ws.name.replace(/\t/g, '    ');
     return { value: ws.id, label: label };
   });
 
@@ -239,26 +282,26 @@ function MainApp() {
       <div className={`filterBox ${isScrolledToTop ? '' : 'scrolled'}`}>
         <div onClick={() => {
           setAIClassifiedFilter(!AIClassifiedFilter);
-          setCurrentPage(1); 
+          setCurrentPage(1);
         }}>
           {AIClassifiedFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
-          <span>AI Classified</span>
+          <span>자동 분류</span>
         </div>
 
         <div onClick={() => {
           setReviewNeededFilter(!reviewNeededFilter);
-          setCurrentPage(1); 
+          setCurrentPage(1);
         }}>
           {reviewNeededFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
-          <span>Review Needed</span>
+          <span>검수 필요</span>
         </div>
 
         <div onClick={() => {
           setExceptionFilter(!exceptionFilter);
-          setCurrentPage(1); 
+          setCurrentPage(1);
         }}>
           {exceptionFilter ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
-          <span>NonException</span>
+          <span>예외 아님</span>
         </div>
       </div>
 
@@ -280,61 +323,74 @@ function MainApp() {
 
       {evidencesIsOpen && (
         <EvidenceModal
-            evidence={selectedEvidence}
-            show = {evidencesIsOpen}
-            onHide={() => closeEvidenceModal()}
+          id={selectedEvidencePpId}
+          evidence={selectedEvidence}
+          show={evidencesIsOpen}
+          onHide={() => closeEvidenceModal()}
+          handleScoreChange={(id, idx, score) => handleEviScoreChange(id, idx, score)}
+          index={selectedEvidenceIdx}
         />
       )}
 
+      <button className='searchBtn'>
+        <FaSearch/>
+      </button>
+      <input
+        className='searchBar'
+        type="text"
+        placeholder="search..."
+        onChange={(e) => searchHandleChange(e.target.value)}
+        value={searchKeyword} />
+
       <div className='menuBox'>
-      {selectedWSId && (
-        <CustomSelect 
-          options={options} 
-          myFontSize="14px" 
-          handleSelectChange={handleSelectChange} 
-          selectedValue={selectedWSId} 
-          fontColor="#1d2023" 
-          backgroundColor= {'var(--white)'}
-          selectedBackgroundColor="#1d2023"
-          selectedColor= {'var(--white)'}
-          hoverColor = {'var(--white)'}
-          hoverBackgroundColor = {'rgba(29, 32, 35, 0.5)'}
-          controlColor = {'var(--default-text-color)'}
-          controlBackgroundColor = {'0)'}
-          width = {400}
-          menuPlacement = {"bottom"}
-        />
-      )}
-        <div className = 'deleteBtn'>
+        {selectedWSId && (
+          <CustomSelect
+            options={options}
+            myFontSize="14px"
+            handleSelectChange={handleSelectChange}
+            selectedValue={selectedWSId}
+            fontColor="#1d2023"
+            backgroundColor={'var(--white)'}
+            selectedBackgroundColor="#1d2023"
+            selectedColor={'var(--white)'}
+            hoverColor={'var(--white)'}
+            hoverBackgroundColor={'rgba(29, 32, 35, 0.5)'}
+            controlColor={'var(--default-text-color)'}
+            controlBackgroundColor={'0)'}
+            width={400}
+            menuPlacement={"bottom"}
+          />
+        )}
+        <div className='deleteBtn'>
           <CustomButton
-            handleOnClick = {handleSetDeleteClick}
-            icon = {RiDeleteBin6Line}
-            text = {"Delete All Tasks"}
-            width = {150}
+            handleOnClick={handleSetDeleteClick}
+            icon={RiDeleteBin6Line}
+            text={"Delete All Tasks"}
+            width={150}
           />
         </div>
-        <div className = 'uploadBtn'>
+        <div className='uploadBtn'>
           <CustomButton
-            handleOnClick = {() => setModalShow(true)}
-            icon = {LuFilePlus2}
-            text = {"Csv Upload"}
-            width = {125}
+            handleOnClick={() => setModalShow(true)}
+            icon={LuFilePlus2}
+            text={"Csv Upload"}
+            width={125}
           />
         </div>
-        {selectedWSId && 
-          <div className = 'exportBtn'>
-            <div className = 'btnBox'>
+        {selectedWSId &&
+          <div className='exportBtn'>
+            <div className='btnBox'>
               <CustomButton
-                handleOnClick = {handleExportClick}
-                icon = {PiExportBold}
-                text = {"Csv Export"}
-                width = {125}
+                handleOnClick={handleExportClick}
+                icon={PiExportBold}
+                text={"Csv Export"}
+                width={125}
               />
             </div>
           </div>
-        } 
+        }
       </div>
-      
+
       {loading && (
         <div className='spinnerBox'>
           <Spinner animation="border" role="status">
@@ -343,7 +399,7 @@ function MainApp() {
         </div>
       )}
 
-      { !loading && selectedppList.length > 0 && (
+      {!loading && selectedppList.length > 0 && (
         <div>
           <DataTable
             selectedppList={selectedppList}
@@ -352,7 +408,9 @@ function MainApp() {
             handleLTypeChange={handleLTypeChange}
             licenseTypeMap={licenseTypeMap}
             openEvidenceModal={openEvidenceModal}
-            handleDelete = {handleItemDelete}
+            handleDelete={handleItemDelete}
+            handleScoreChange={handleEviScoreChange}
+            evidencesMap={evidencesMap}
           />
           <Pagination
             activePage={currentPage}
@@ -363,9 +421,9 @@ function MainApp() {
             prevPageText={"<"}
             nextPageText={">"}
           />
-         
+
           <div className='seletItemCnt'>
-            <CustomSelect 
+            <CustomSelect
               options={[
                 { value: 10, label: 10 },
                 { value: 30, label: 30 },
@@ -373,22 +431,22 @@ function MainApp() {
                 { value: 100, label: 100 },
                 { value: 200, label: 200 }
               ]}
-              myFontSize="14px" 
-              handleSelectChange={(id, value) => setItemsPerPage(value)} 
-              selectedValue={itemsPerPage} 
-              fontColor="#1d2023" 
-              backgroundColor="#fff" 
+              myFontSize="14px"
+              handleSelectChange={(id, value) => setItemsPerPage(value)}
+              selectedValue={itemsPerPage}
+              fontColor="#1d2023"
+              backgroundColor="#fff"
               selectedBackgroundColor="#1d2023"
               selectedColor="#fff"
-              hoverColor = "#fff"
-              hoverBackgroundColor = {'rgba(29, 32, 35, 0.5)'}
+              hoverColor="#fff"
+              hoverBackgroundColor={'rgba(29, 32, 35, 0.5)'}
               width={90}
-              controlColor = {controlColor}
-              controlBackgroundColor = {'rgba(29, 32, 35, 0)'}
-              menuPlacement = {"top"}
+              controlColor={controlColor}
+              controlBackgroundColor={'rgba(29, 32, 35, 0)'}
+              menuPlacement={"top"}
             />
           </div>
-          <p className = "pageNum">{currentPage} of {Math.ceil(totalItemsCount / itemsPerPage)}</p>
+          <p className="pageNum">{currentPage} of {Math.ceil(totalItemsCount / itemsPerPage)}</p>
         </div>
       )}
 

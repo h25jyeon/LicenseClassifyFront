@@ -12,13 +12,21 @@
   --white: #fff;
   --text-decoration-color: #000;
   --default-text-color: #000;
-  --gray-text-color: #838383;
+  --gray-text-color: #535353;
   --btn-text-color: #fff;
   --btn-default-color:  #fb6c44;
   --btn-active-color:  #ee5f39;
   --btn-page-default-color:  #38c479;
   --btn-page-active-color:  #0AA16E;
   --btn-shadow-color: rgba(94, 94, 94, 0.40);
+
+  --free: #8cd4f3;
+  --shareware: #8ce490;
+  --commercial: #b199fa;
+  --etc: #EFDC05;
+  --exception:#F68657;
+  --none: #ee6e9f;
+  --unknown: #D8E6E7;
 
   --modal-background-color: #fff;
 }
@@ -31,7 +39,7 @@ html.dark {
   --border-color: rgba(248, 208, 89, 0);
   --white: #fff;
   --text-decoration-color: #000;
-  --gray-text-color: #bfc7da;
+  --gray-text-color: #b5bed1;
   --default-text-color: #D6DFF5;
   --btn-text-color: #fff;
   --btn-default-color:  #fb6c44c4;
@@ -39,6 +47,13 @@ html.dark {
   --btn-page-default-color:  #38c479c4;
   --btn-page-active-color:  #0aa16fb7;
   --btn-shadow-color: rgb(146, 146, 146, 0);
+
+  --free: #288ab4bd;
+  --shareware: #67a16acc;
+  --commercial: #8b7bc0b9;
+  --etc: #c7b704;
+  --none: #be577f;
+  --unknown: #a5b0b1a4;
 
   --modal-background-color: #060D30;
 }
@@ -51,7 +66,7 @@ html {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-family: var(--font-SpoqaHanSansNeo-Regular);
+  font-family: var(--font-NotoSansKR);
   font-size: 15px;
 }
 
